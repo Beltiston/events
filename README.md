@@ -20,16 +20,16 @@ A high-performance, feature-rich event emitter implementation for TypeScript/Jav
 ## Installation
 
 ```bash
-npm install @your-package/event-emitter
+npm install @beltiston/event-emitter
 ```
 
 ## Quick Start
 
 ```typescript
-import { EventEmitter } from '@your-package/event-emitter';
+import { EventEmitter } from '@beltiston/event-emitter';
 
 // Define your event types
-interface MyEvents {
+type MyEvents = {
   'data': (data: string) => void;
   'error': (error: Error) => void;
   'user:created': (user: User, timestamp: number) => void;
@@ -181,4 +181,4 @@ This implementation uses several optimization techniques:
 
 ## License
 
-MIT
+LGPLv3
