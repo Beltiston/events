@@ -1,0 +1,34 @@
+{
+  "name": "@beltiston/events",
+  "version": "1.0.0",
+  "description": "Performance-focused event emitter implementation featuring single-listener storage optimization, direct parameter passing, and minimal overhead design.",
+  "keywords": [
+    "event",
+    "emitter",
+    "typescript",
+    "fast",
+  ],
+  "homepage": "https://github.com/beltiston/events#readme",
+  "bugs": "https://github.com/beltiston/events/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beltiston/events.git"
+  },
+  "license": "LGPL-3.0",
+  "author": "avonryle",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "bun run ./dev/bundle"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist/*.js"
+  ]
+}
