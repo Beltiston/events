@@ -1,184 +1,125 @@
-# EventEmitter
 
-A high-performance, feature-rich event emitter implementation for TypeScript/JavaScript with advanced capabilities including wildcard events, filtering, propagation control, and async support.
+# @beltiston/events
 
-## Features
+A high-performance, feature-rich EventEmitter for TypeScript and JavaScript. Supports wildcard events, filtering, priority, once-listeners, async emission, propagation control, and event piping.
 
-- **🚀 High Performance**: Optimized emit paths with minimal overhead
-- **🎯 Type-Safe**: Full TypeScript support with generic event maps
-- **🌟 Wildcard Events**: Support for glob-style patterns (`user.*`, `data.?.updated`)
-- **⚡ Priority Listeners**: Control execution order with priority levels
-- **🔄 Event Piping**: Forward events between emitters
-- **⏱️ TTL & Limited Execution**: Auto-remove listeners after timeout or execution count
-- **🎨 Filtering**: Conditionally execute listeners based on event arguments
-- **🔌 Event Streams**: Functional reactive programming with chainable operators
-- **🌐 Transport Layer**: Cross-context event communication (WebSocket, MessageChannel, BroadcastChannel)
-- **🧹 Auto Cleanup**: Automatic removal of stale listeners
-- **🛑 Propagation Control**: Stop event propagation to subsequent listeners
-- **⏳ Async Support**: Promise-based event emission with `emitAsync` and `waitFor`
+---
 
 ## Installation
 
 ```bash
-npm install @beltiston/event-emitter
+npm install @beltiston/events
+````
+
+or
+
+```bash
+pnpm add @beltiston/events
 ```
 
-## Quick Start
+---
 
-```typescript
-import { EventEmitter } from '@beltiston/event-emitter';
+## Basic Usage
 
-// Define your event types
-type MyEvents = {
-  'data': (data: string) => void;
-  'error': (error: Error) => void;
-  'user:created': (user: User, timestamp: number) => void;
+```ts
+import EventEmitter from "@beltiston/events";
+
+interface AppEvents {
+  data: (value: string) => void;
+  error: (error: Error) => void;
 }
 
-// Create an emitter
-const emitter = new EventEmitter<MyEvents>();
+const emitter = new EventEmitter<AppEvents>();
 
-// Add listeners
-emitter.on('data', (data) => {
-  console.log('Received:', data);
-});
-
-// Emit events
-emitter.emit('data', 'Hello World!');
+emitter.on("data", (val) => console.log("Data:", val));
+emitter.emit("data", "hello world");
 ```
 
-## Advanced Usage
+---
 
-### Wildcard Events
+## Advanced Usage Examples
 
-```typescript
-// Listen to all user events
-emitter.on('user:*', (data) => {
-  console.log('User event:', data);
-});
+**Once-listeners**
 
-// Single character wildcard
-emitter.on('user:?.updated', (data) => {
-  console.log('User updated:', data);
-});
-
-emitter.emit('user:123', userData);      // Matches user:*
-emitter.emit('user:1.updated', userData); // Matches user:?.updated
+```ts
+emitter.once("data", (val) => console.log("First only:", val));
 ```
 
-### Priority & Options
+**Prepending listeners**
 
-```typescript
-// High priority listener (executes first)
-emitter.on('data', handler1, { priority: 10 });
-
-// Limited execution (only 5 times)
-emitter.on('data', handler2, { times: 5 });
-
-// Auto-remove after 30 seconds
-emitter.on('data', handler3, { ttl: 30000 });
-
-// Conditional execution
-emitter.on('data', handler4, {
-  filter: ([data]) => data.length > 10
-});
+```ts
+emitter.prependListener("data", (val) => console.log("Runs first:", val));
 ```
 
-### Async Operations
+**Async emission**
 
-```typescript
-// Wait for an event
-const [user] = await emitter.waitFor('user:created', 5000);
-
-// Race multiple events
-const { event, args } = await emitter.race(['success', 'error'], 10000);
-
-// Emit with async handlers
-await emitter.emitAsync('process', data);
+```ts
+await emitter.emitAsync("data", "async value");
 ```
 
-### Event Piping
+**Waiting for events**
 
-```typescript
-const emitter1 = new EventEmitter();
-const emitter2 = new EventEmitter();
-
-// Forward all events from emitter1 to emitter2
-emitter1.pipe(emitter2);
-
-emitter1.emit('data', 'hello'); // Also emitted on emitter2
+```ts
+const [val] = await emitter.waitFor("data", 5000);
 ```
 
-### Event Streams
+**Race between multiple events**
 
-```typescript
-const stream = emitter.stream('data')
-  .filter(([data]) => data.length > 5)
-  .map(([data]) => data.toUpperCase())
-  .forEach((data) => console.log(data));
+```ts
+const result = await emitter.race(["data", "error"], 5000);
+console.log(result.event, result.args);
 ```
 
-### Cross-Context Communication
+**Piping events to another emitter**
 
-```typescript
-// WebSocket transport
-const transporter = emitter.transporter({
-  protocol: 'ws',
-  url: 'ws://localhost:8080'
-});
-
-await transporter.connect();
-// Events are now synchronized across the connection
+```ts
+const emitter2 = new EventEmitter<AppEvents>();
+emitter.pipe(emitter2);
 ```
+
+**Stopping propagation**
+
+```ts
+emitter.on("data", () => emitter.stopPropagation());
+```
+
+---
 
 ## API Reference
 
-### Core Methods
+| Method                                           | Description                                                  | Returns                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `addListener(event, listener, options?)`         | Add a listener with optional priority, times, ttl, or filter | `this`                                                       |
+| `on(event, listener, options?)`                  | Alias for `addListener`                                      | `this`                                                       |
+| `once(event, listener, options?)`                | Add a one-time listener                                      | `this`                                                       |
+| `prependListener(event, listener, options?)`     | Add listener to start of array                               | `this`                                                       |
+| `prependOnceListener(event, listener, options?)` | Add one-time listener to start                               | `this`                                                       |
+| `removeListener(event?, listener?)`              | Remove specific or all listeners for an event                | `this`                                                       |
+| `off(event?, listener?)`                         | Alias for `removeListener`                                   | `this`                                                       |
+| `removeAllListeners(event?)`                     | Remove all listeners or for a specific event                 | `this`                                                       |
+| `emit(event, ...args)`                           | Synchronously emit event with arguments                      | `boolean`                                                    |
+| `emitAsync(event, ...args)`                      | Asynchronously emit event and wait for promises              | `Promise<boolean>`                                           |
+| `stopPropagation()`                              | Stop event propagation to subsequent listeners               | `void`                                                       |
+| `pipe(targetEmitter)`                            | Pipe events to another emitter                               | `this`                                                       |
+| `unpipe(targetEmitter?)`                         | Remove piping to a target or all                             | `this`                                                       |
+| `listenerCount(event?)`                          | Count listeners for a specific event or total                | `number`                                                     |
+| `eventNames()`                                   | Return array of regular, once, and wildcard events           | `{ regular: string[], once: string[], wildcards: string[] }` |
+| `listeners(event)`                               | Return array of listeners for the event                      | `Array<Function>`                                            |
+| `rawListeners(event)`                            | Return original listeners, including wrapped once-listeners  | `Array<Function>`                                            |
+| `setMaxListeners(n)`                             | Set maximum listeners per event                              | `this`                                                       |
+| `getMaxListeners()`                              | Get maximum listeners per event                              | `number`                                                     |
+| `waitFor(event, timeout?)`                       | Wait for the event to occur                                  | `Promise<any[]>`                                             |
+| `race(events[], timeout?)`                       | Wait for the first of multiple events                        | `Promise<{ event: string, args: any[] }>`                    |
+| `update(event, listener, options?, predicate?)`  | Replace existing listener(s) matching predicate              | `this`                                                       |
+| `destroy()`                                      | Destroy emitter, remove all listeners, clear resources       | `void`                                                       |
 
-- `on(event, listener, options?)` - Add a listener
-- `once(event, listener, options?)` - Add a one-time listener
-- `off(event?, listener?)` - Remove listener(s)
-- `emit(event, ...args)` - Emit an event synchronously
-- `emitAsync(event, ...args)` - Emit an event asynchronously
-- `removeAllListeners(event?)` - Remove all listeners
+---
 
-### Advanced Methods
-
-- `waitFor(event, timeout?)` - Wait for an event to occur
-- `race(events[], timeout?)` - Wait for first of multiple events
-- `pipe(target)` - Forward events to another emitter
-- `stream(event)` - Create an event stream
-- `transporter(options)` - Create cross-context transport
-- `stopPropagation()` - Stop current event propagation
-
-### Utility Methods
-
-- `listeners(event)` - Get listeners for an event
-- `rawListeners(event)` - Get unwrapped listeners
-- `listenerCount(event?)` - Count listeners
-- `eventNames()` - Get all event names
-- `setMaxListeners(n)` - Set max listeners per event
-- `destroy()` - Cleanup and destroy emitter
-
-## Configuration
-
-```typescript
-const emitter = new EventEmitter({
-  autoCleanup: true,              // Enable auto cleanup
-  autoCleanupThreshold: 300000    // 5 minutes (default)
-});
-```
-
-## Performance
-
-This implementation uses several optimization techniques:
-
-- **Fast-path emit**: Specialized code paths for common argument counts (0-5 args)
-- **Bit flags**: Efficient feature detection without boolean checks
-- **Array pooling**: Reuses argument arrays to reduce allocations
-- **Pattern caching**: Compiled regex patterns are cached
-- **Minimal overhead**: Direct function calls when no advanced features are used
+## Integrating @beltiston/streams into @beltiston/events
+to be written
 
 ## License
 
-LGPLv3
+**LGPL-3.0** — GNU Lesser General Public License v3.0
+See the [LICENSE](https://www.gnu.org/licenses/lgpl-3.0.html) file for full terms.
+
