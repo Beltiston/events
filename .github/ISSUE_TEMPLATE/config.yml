@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🧩 Feature Request
+    url: https://github.com/beltiston/events/issues/new?template=feature_request.yml
+    about: Suggest a new feature or enhancement for @beltiston/events or related packages.
+  - name: 📚 Bug Reporting
+    url: https://github.com/beltiston/events/issues/new?template=bug_report.yml
+    about: Report a bug in @beltiston/events or related packages.
