@@ -1,0 +1,49 @@
+name: "💡 Feature Request"
+description: Propose a new feature or enhancement for @beltiston/events or related packages.
+title: "[Feature] Short description here"
+labels: ["enhancement", "needs triage"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe the feature you'd like to see. Be as specific and concise as possible.
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why do you need this feature? What problem does it solve?
+      placeholder: Describe the problem this feature would solve.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Explain how the feature should work, including examples or API design ideas.
+      placeholder: |
+        Example:
+        ```ts
+        emitter.onAny((event, data) => console.log(event, data))
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you tried other solutions or workarounds?
+      placeholder: List any existing approaches or APIs that didn’t meet your needs.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues for similar feature requests.
+          required: true
+        - label: I have clearly described the proposed feature and its benefits.
+          required: true
