@@ -1,0 +1,92 @@
+name: "🐞 Bug Report"
+description: Report a reproducible bug or regression in @beltiston/events or @beltiston/streams.
+title: "[Bug] Short description here"
+labels: ["bug", "needs triage"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug. Please fill out all required sections clearly so maintainers can reproduce and fix it faster.
+
+  - type: input
+    id: package
+    attributes:
+      label: Affected Package
+      description: Which package does this bug affect?
+      placeholder: "@beltiston/events or @beltiston/streams"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Package Version
+      description: Version number of the affected package
+      placeholder: "e.g. 1.2.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the bug clearly.
+      placeholder: What is happening and what did you expect instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Provide a minimal code snippet or clear steps to reproduce the issue.
+      placeholder: |
+        1. Install the package
+        2. Run this code:
+           ```ts
+           emitter.on("test", handler)
+           ```
+        3. Observe the error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Where are you running this?
+      placeholder: |
+        - OS: Windows 11 / macOS / Linux
+        - Runtime: Bun 1.1.14 / Node.js 20.x
+        - TypeScript: 5.6.2
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs or Screenshots
+      description: Paste relevant logs or attach screenshots if applicable.
+      placeholder: "Error stack traces, console output, etc."
+      render: shell
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues for duplicates.
+          required: true
+        - label: I am using the latest version of the affected package.
+          required: true
+        - label: I have included all necessary details to reproduce this bug.
+          required: true
