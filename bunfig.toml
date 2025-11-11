@@ -1,0 +1,8 @@
+smol = true
+telemetry = false
+
+[console]
+depth = 3
+
+[test]
+root = "./__tests__"
